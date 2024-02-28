@@ -17,7 +17,7 @@ namespace StockControlProject
     public partial class Form1 : Form
     {
         DataTable importExcel = new DataTable();
-        string connectionString = "Server=RABIYAGEZER\\BERKAY;Initial Catalog=Test;User Id=sa;Password=berkay345..";
+        string connectionString = "your_connection_string";
         private int rowIndex = 0;
         public Form1()
         {
