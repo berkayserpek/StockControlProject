@@ -1,0 +1,57 @@
+//sonuçlarý getiren prosedür
+
+USE [Test]
+GO
+/****** Object:  StoredProcedure [dbo].[GetStockTransactions]    Script Date: 28.02.2024 10:23:57 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[GetStockTransactions]
+    @Malkodu VARCHAR(50),
+    @BaslangicTarihi INT,
+    @BitisTarihi INT
+AS
+BEGIN
+    SELECT
+        ROW_NUMBER() OVER (ORDER BY STI.Tarih) AS SiraNo,
+        CASE
+            WHEN STI.IslemTur = 0 THEN 'Giriþ'
+            WHEN STI.IslemTur = 1 THEN 'Çýkýþ'
+        END AS IslemTur,
+        STI.EvrakNo,
+        CONVERT(VARCHAR(15), CAST(STI.Tarih - 2 AS DATETIME), 104) AS Tarih,
+        CASE
+            WHEN STI.IslemTur = 0 THEN STI.Miktar
+            ELSE 0
+        END AS GirisMiktar,
+        CASE
+            WHEN STI.IslemTur = 1 THEN STI.Miktar
+            ELSE 0
+        END AS CikisMiktar
+    FROM
+        STI
+    WHERE
+        STI.MalKodu = @Malkodu
+        AND STI.Tarih BETWEEN @BaslangicTarihi AND @BitisTarihi
+    ORDER BY
+        STI.Tarih ASC
+END
+
+
+//stklarý getiren prosedür
+USE [Test]
+GO
+/****** Object:  StoredProcedure [dbo].[GetUniqueItems]    Script Date: 28.02.2024 10:24:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[GetUniqueItems]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT DISTINCT ID, MalKodu, MalAdi
+    FROM STK;
+END
